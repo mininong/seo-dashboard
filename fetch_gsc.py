@@ -9,7 +9,7 @@ from googleapiclient.discovery import build
 # หากเป็น Domain property ให้เขียน 'sc-domain:yourwebsite.com'
 # หากเป็น URL Prefix ให้เขียน 'https://www.yourwebsite.com/'
 # ==========================================
-SITE_URL = 'sc-domain:yourwebsite.com' 
+SITE_URL = 'https://www.bangkokeyehospital.com/' 
 
 def main():
     # โหลด Credentials จาก GitHub Secrets
