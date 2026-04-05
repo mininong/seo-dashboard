@@ -26,7 +26,7 @@
             "current_pos": 4.6,
             "prev_pos": 3.9
         },
-        "summary_text": "อาจารย์ Pornchai Mahaisavariya Oculoplastic Surgeon มียอดคลิกเพิ่มขึ้นสูงสุดในไตรมาสนี้"
+        "summary_text": "อาจารย์ Pornchai Mahaisavariya Oculoplastic Surgeon มียอดคนเข้าชมพุ่งสูงสุดในไตรมาสนี้"
     },
     "charts": {
         "clicksTrend": [
@@ -188,51 +188,6 @@
             "growth": 5,
             "current_pos": 6.8,
             "prev_pos": 5.7
-        },
-        {
-            "name": "Nutharin Phusitphoykai",
-            "url": "https://www.bangkokeyehospital.com/ophthalmologists/nutharin-phusitphoykai",
-            "current_clicks": 23,
-            "prev_clicks": 35,
-            "growth": -12,
-            "current_pos": 4.1,
-            "prev_pos": 4.5
-        },
-        {
-            "name": "Rosanun Sikarinkul",
-            "url": "https://www.bangkokeyehospital.com/ophthalmologists/rosanun-sikarinkul",
-            "current_clicks": 20,
-            "prev_clicks": 12,
-            "growth": 8,
-            "current_pos": 5.2,
-            "prev_pos": 4.6
-        },
-        {
-            "name": "Somsiri Sukavatcharin",
-            "url": "https://www.bangkokeyehospital.com/ophthalmologists/somsiri-sukavatcharin?service=retina-center",
-            "current_clicks": 19,
-            "prev_clicks": 71,
-            "growth": -52,
-            "current_pos": 5.3,
-            "prev_pos": 3.3
-        },
-        {
-            "name": "Pattaraporn Sirampuj",
-            "url": "https://www.bangkokeyehospital.com/en/ophthalmologists/pattaraporn-sirampuj?service=oculoplastic",
-            "current_clicks": 18,
-            "prev_clicks": 4,
-            "growth": 14,
-            "current_pos": 4.5,
-            "prev_pos": 4.6
-        },
-        {
-            "name": "Pattaraporn Sirampuj",
-            "url": "https://www.bangkokeyehospital.com/ophthalmologists/pattaraporn-sirampuj?service=oculoplastic",
-            "current_clicks": 17,
-            "prev_clicks": 66,
-            "growth": -49,
-            "current_pos": 4.9,
-            "prev_pos": 4.0
         }
     ],
     "lastUpdated": "05/04/2026 00:00"
