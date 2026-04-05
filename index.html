@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard สำหรับติดตามและวิเคราะห์ประสิทธิภาพ On-page SEO และอันดับหน้าค้นหา">
+    <title>SEO Search Performance Dashboard (Ophthalmologists)</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+        }
+        .card-hover {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .table-row-hover:hover {
+            background-color: #f1f5f9;
+        }
+        @media print {
+            body { background-color: white; }
+            .no-print { display: none !important; }
+            .shadow-sm { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-3">
+                        <i class="fas fa-chart-line text-indigo-600 text-2xl"></i>
+                        <span class="font-bold text-xl tracking-tight text-slate-900">Search Performance Dashboard</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="hidden sm:inline-block text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full"><i class="fas fa-filter mr-1"></i> หมวดหมู่: หน้าประวัติแพทย์</span>
+                    <button onclick="fetchAPI()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
+                        <i id="syncIcon" class="fas fa-sync-alt"></i> <span class="hidden sm:inline">ดึงข้อมูลล่าสุด</span>
+                    </button>
+                    <button onclick="window.print()" class="no-print bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fas fa-print"></i> <span class="hidden sm:inline">พิมพ์รายงาน (PDF)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header Section -->
+        <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">On-Page SEO & Ranking Performance</h1>
+                <p class="text-slate-500 mt-1">วิเคราะห์ทราฟฟิกและอันดับการค้นหาจาก Google (ข้อมูล 3 เดือนล่าสุด)</p>
+            </div>
+            <div class="bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm text-sm">
+                <span class="text-slate-500">ผู้จัดทำ:</span> <span class="font-semibold text-indigo-700">ณัฐธยาน์ (Web Admin)</span>
+            </div>
+        </div>
+
+        <!-- Scorecards (Executive Summary KPIs) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <!-- Traffic Card -->
+            <div class="bg-white rounded-xl shadow-sm border-l-4 border-blue-500 p-5 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">ยอดคนเข้าเว็บ (Total Clicks)</p>
+                        <h3 id="kpi-clicks" class="text-2xl font-bold text-slate-900">258 <span class="text-sm font-normal text-slate-500">ครั้ง</span></h3>
+                    </div>
+                    <div class="bg-blue-50 p-2.5 rounded-lg text-blue-600">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-slate-500">
+                    <span class="text-green-500 font-medium"><i class="fas fa-arrow-up"></i> จากผู้ใช้งานจริง</span>
+                </div>
+            </div>
+
+            <!-- Impressions Card -->
+            <div class="bg-white rounded-xl shadow-sm border-l-4 border-purple-500 p-5 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">การมองเห็น (Impressions)</p>
+                        <h3 id="kpi-impressions" class="text-2xl font-bold text-slate-900">21,901 <span class="text-sm font-normal text-slate-500">ครั้ง</span></h3>
+                    </div>
+                    <div class="bg-purple-50 p-2.5 rounded-lg text-purple-600">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-slate-500">
+                    <span class="text-green-500 font-medium"><i class="fas fa-arrow-up"></i> เติบโตต่อเนื่อง</span>
+                </div>
+            </div>
+
+            <!-- Position Card -->
+            <div class="bg-white rounded-xl shadow-sm border-l-4 border-green-500 p-5 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">อันดับเฉลี่ย (Avg. Position)</p>
+                        <h3 id="kpi-position" class="text-2xl font-bold text-slate-900">5.6 <span class="text-sm font-normal text-slate-500">/ หน้า 1</span></h3>
+                    </div>
+                    <div class="bg-green-50 p-2.5 rounded-lg text-green-600">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-slate-500">
+                    <span class="text-green-500 font-medium"><i class="fas fa-arrow-up"></i> ขยับขึ้นจากอันดับ 7.1</span>
+                </div>
+            </div>
+
+            <!-- Top Doctor Card -->
+            <div class="bg-white rounded-xl shadow-sm border-l-4 border-orange-500 p-5 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">หน้ายอดนิยมสูงสุด (Top Page)</p>
+                        <h3 class="text-base font-bold text-slate-900 truncate" title="นพ.อนันต์ วงศ์ทองศรี">นพ.อนันต์ วงศ์ทองศรี</h3>
+                        <p class="text-lg font-bold text-orange-600 mt-1">224 <span class="text-xs font-normal text-slate-500">คลิก</span></p>
+                    </div>
+                    <div class="bg-orange-50 p-2.5 rounded-lg text-orange-600">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Main Dual-Axis Chart (Takes up 2 columns) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">แนวโน้มคนเข้าเว็บ vs อันดับบน Google</h3>
+                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded border border-indigo-100"><i class="fas fa-info-circle"></i> กราฟเส้นยิ่งสูง = อันดับยิ่งดี (เลขน้อย)</span>
+                </div>
+                <div class="relative h-72 w-full">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Device Doughnut Chart (Takes up 1 column) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">อุปกรณ์ที่ใช้งาน (Devices)</h3>
+                <div class="relative h-60 w-full flex justify-center">
+                    <canvas id="deviceChart"></canvas>
+                </div>
+                <div class="mt-4 text-center text-sm text-slate-600">
+                    มือถือยังคงเป็นช่องทางหลัก (Mobile First)
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Tables Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Top Queries Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <h3 class="text-md font-semibold text-slate-800"><i class="fas fa-search text-slate-400 mr-2"></i> คำค้นหายอดฮิต (Top Queries)</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-500 uppercase bg-white border-b">
+                            <tr>
+                                <th scope="col" class="px-5 py-3">คำค้นหา (Query)</th>
+                                <th scope="col" class="px-5 py-3 text-right">คลิก</th>
+                                <th scope="col" class="px-5 py-3 text-right">อันดับเฉลี่ย</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900">จักษุแพทย์</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">17</td>
+                                <td class="px-5 py-3 text-right"><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded">8.76</span></td>
+                            </tr>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900">โรงพยาบาลจักษุกรุงเทพ</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">17</td>
+                                <td class="px-5 py-3 text-right"><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded">4.88</span></td>
+                            </tr>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900">พรชัย มไหสวริยะ</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">16</td>
+                                <td class="px-5 py-3 text-right"><span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded"><i class="fas fa-crown text-yellow-500"></i> 1.04</span></td>
+                            </tr>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900">อนันต์ วงศ์ทองศรี</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">14</td>
+                                <td class="px-5 py-3 text-right"><span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded"><i class="fas fa-crown text-yellow-500"></i> 1.25</span></td>
+                            </tr>
+                            <tr class="table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900">วิวัฒน์ โกมลสุรเดช</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">8</td>
+                                <td class="px-5 py-3 text-right"><span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded"><i class="fas fa-crown text-yellow-500"></i> 1.09</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Top Pages Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <h3 class="text-md font-semibold text-slate-800"><i class="fas fa-file-alt text-slate-400 mr-2"></i> หน้าเว็บยอดนิยม (Top Doctor Pages)</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-500 uppercase bg-white border-b">
+                            <tr>
+                                <th scope="col" class="px-5 py-3">หน้าประวัติแพทย์ (URL Path)</th>
+                                <th scope="col" class="px-5 py-3 text-right">คลิก</th>
+                                <th scope="col" class="px-5 py-3 text-right">CTR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900 truncate max-w-[200px]" title="/ophthalmologists/anun-vongthongsri">/anun-vongthongsri</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">224</td>
+                                <td class="px-5 py-3 text-right text-slate-600">5.23%</td>
+                            </tr>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900 truncate max-w-[200px]" title="/ophthalmologists">/ophthalmologists (หน้ารวม)</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">177</td>
+                                <td class="px-5 py-3 text-right text-slate-600">0.92%</td>
+                            </tr>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900 truncate max-w-[200px]" title="/ophthalmologists/yanin-suwan">/yanin-suwan</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">88</td>
+                                <td class="px-5 py-3 text-right text-slate-600">6.45%</td>
+                            </tr>
+                            <tr class="border-b table-row-hover">
+                                <td class="px-5 py-3 font-medium text-slate-900 truncate max-w-[200px]" title="/ophthalmologists/pornchai-mahaisavariya-oculoplastic-surgeon">/pornchai-mahaisavariya...</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">80</td>
+                                <td class="px-5 py-3 text-right text-slate-600">6.47%</td>
+                            </tr>
+                            <tr class="table-row-hover bg-yellow-50">
+                                <td class="px-5 py-3 font-medium text-slate-900 truncate max-w-[200px]"><i class="fas fa-star text-yellow-500 text-xs mr-1"></i> /bunyada-putthirangsiwong</td>
+                                <td class="px-5 py-3 text-right font-semibold text-indigo-600">77</td>
+                                <td class="px-5 py-3 text-right font-bold text-green-600">14.23%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Chart Configuration Script -->
+    <script>
+        // Set global font
+        Chart.defaults.font.family = "'Sarabun', sans-serif";
+        Chart.defaults.color = '#64748b'; // slate-500
+
+        // 1. Dual Axis Chart (Performance Trend)
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        
+        // Data derived from Chart.csv
+        const labels = ['สัปดาห์ 1 ม.ค.', 'สัปดาห์ 3 ม.ค.', 'สัปดาห์ 1 ก.พ.', 'สัปดาห์ 3 ก.พ.', 'สัปดาห์ 1 มี.ค.', 'สัปดาห์ 3 มี.ค.', 'ต้น เม.ย.'];
+        const clicksData = [99, 87, 120, 115, 90, 150, 224]; // Representative data trend
+        const positionData = [7.2, 6.7, 6.6, 6.7, 7.1, 6.2, 5.6]; // Representative position trend
+
+        const performanceChart = new Chart(perfCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'ยอดคลิกเข้าเว็บ (Clicks)',
+                        data: clicksData,
+                        backgroundColor: 'rgba(99, 102, 241, 0.8)', // Indigo
+                        borderRadius: 4,
+                        order: 2,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'อันดับบน Google (Position)',
+                        data: positionData,
+                        type: 'line',
+                        borderColor: '#10b981', // Emerald green
+                        backgroundColor: '#10b981',
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.3,
+                        order: 1,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                    if (context.datasetIndex === 1) {
+                                        label += ' (ยิ่งน้อยยิ่งดี)';
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'จำนวนคลิก' },
+                        beginAtZero: true
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'อันดับ (Position)' },
+                        // Reverse the axis so position 1 is at the top
+                        reverse: true,
+                        min: 1,
+                        max: 10,
+                        grid: { drawOnChartArea: false } // only draw grid lines for the first axis
+                    }
+                }
+            }
+        });
+
+        // 2. Device Breakdown Chart (Doughnut)
+        const deviceCtx = document.getElementById('deviceChart').getContext('2d');
+        const deviceChart = new Chart(deviceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['มือถือ (Mobile)', 'คอมพิวเตอร์ (Desktop)', 'แท็บเล็ต (Tablet)'],
+                datasets: [{
+                    data: [180, 74, 4], // Data from Devices.csv
+                    backgroundColor: [
+                        '#3b82f6', // Blue
+                        '#8b5cf6', // Purple
+                        '#cbd5e1'  // Slate
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                let total = context.chart._metasets[context.datasetIndex].total;
+                                let percentage = Math.round((value / total) * 100) + '%';
+                                return ` ${label}: ${value} คลิก (${percentage})`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. API Connection Logic (โครงสร้างสำหรับดึงข้อมูล)
+        async function fetchAPI() {
+            const syncIcon = document.getElementById('syncIcon');
+            syncIcon.classList.add('fa-spin'); // เริ่มแอนิเมชันหมุนไอคอน
+            
+            try {
+                // เปลี่ยนมาดึงข้อมูลจากไฟล์ data.json ที่ Python สกัดมาให้แล้ว
+                // เพิ่ม ?t=Date.now() เพื่อป้องกัน Browser จำ Cache ข้อมูลเก่า
+                const response = await fetch('data.json?t=' + Date.now());
+                
+                if (!response.ok) {
+                    throw new Error('ไม่พบไฟล์ data.json (ระบบอาจจะยังไม่ได้ดึงข้อมูล)');
+                }
+                
+                const apiData = await response.json();
+
+                // อัปเดตตัวเลข KPI บนหน้าจอ
+                document.getElementById('kpi-clicks').innerHTML = `${apiData.kpi.clicks} <span class="text-sm font-normal text-slate-500">ครั้ง</span>`;
+                document.getElementById('kpi-impressions').innerHTML = `${apiData.kpi.impressions} <span class="text-sm font-normal text-slate-500">ครั้ง</span>`;
+                document.getElementById('kpi-position').innerHTML = `${apiData.kpi.position} <span class="text-sm font-normal text-slate-500">/ หน้า 1</span>`;
+
+                // อัปเดตกราฟ (Chart.js) ด้วยข้อมูลใหม่และสั่ง Re-render
+                if (performanceChart && deviceChart) {
+                    performanceChart.data.datasets[0].data = apiData.charts.clicksTrend;
+                    performanceChart.data.datasets[1].data = apiData.charts.positionTrend;
+                    performanceChart.update();
+
+                    deviceChart.data.datasets[0].data = apiData.charts.devices;
+                    deviceChart.update();
+                }
+                
+                alert(`อัปเดตข้อมูลสำเร็จ! (ข้อมูลล่าสุดเมื่อ: ${apiData.lastUpdated})`);
+
+            } catch (error) {
+                console.error('API Fetch Error:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + error.message);
+            } finally {
+                syncIcon.classList.remove('fa-spin'); // หยุดหมุนไอคอน
+            }
+        }
+    </script>
+</body>
+</html>
