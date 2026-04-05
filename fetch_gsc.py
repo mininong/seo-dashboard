@@ -38,12 +38,12 @@ def calculate_change(current, previous):
     return round(((current - previous) / previous) * 100, 1)
 
 def format_dr_name(url_path):
-    """ทำความสะอาดชื่อ URL (แก้ไข Syntax ที่ผิดพลาดแล้ว)"""
+    """ทำความสะอาดชื่อ URL (แก้ไขเป็น Python Syntax ที่ถูกต้องแล้ว)"""
     decoded = urllib.parse.unquote(url_path)
     clean = decoded.replace(SITE_URL, "").replace("ophthalmologists/", "").strip("/")
     clean = clean.replace("en/", "").split('?')[0]
     if not clean: return "หน้าหลักหมวดหมู่แพทย์"
-    # แก้ไขจาก /-/g เป็น '-' ธรรมดาเพื่อให้ Python ทำงานได้
+    # แก้ไข Syntax Python: ใช้ '-' แทน regex /-/g
     return clean.replace('-', ' ').title()
 
 def main():
@@ -96,7 +96,7 @@ def main():
                 "prev_pos": round(prev_row['position'], 1) if prev_row else 0
             })
 
-        # หา Top Gainer (คนที่มีจำนวนคลิกเพิ่มขึ้นมากที่สุด)
+        # หา Top Gainer
         top_gainer = sorted(analysis_list, key=lambda x: x['growth'], reverse=True)[0] if analysis_list else None
 
         # 6. สร้าง JSON
@@ -112,7 +112,7 @@ def main():
             },
             "insights": {
                 "top_gainer": top_gainer,
-                "summary_text": f"อาจารย์ {top_gainer['name']} มียอดคลิกพุ่งสูงขึ้นที่สุดถึง +{top_gainer['growth']} คลิก" if top_gainer else "ยังไม่มีข้อมูลการเติบโต"
+                "summary_text": f"อาจารย์ {top_gainer['name']} มียอดคลิกเพิ่มขึ้นสูงสุดในไตรมาสนี้" if top_gainer else "รอการประมวลผล"
             },
             "charts": {
                 "clicksTrend": [int(cur_c*0.4), int(cur_c*0.6), int(cur_c*0.5), int(cur_c*0.8), int(cur_c*0.7), int(cur_c*0.9), int(cur_c)],
@@ -126,7 +126,7 @@ def main():
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=4)
             
-        print(f"🚀 สำเร็จ! วิเคราะห์ Insight ของ {top_gainer['name']} เรียบร้อยแล้ว")
+        print(f"🚀 Insight Generated Successfully!")
 
     except Exception as e:
         print("❌ Error:", traceback.format_exc())
