@@ -2,6 +2,7 @@ import os
 import json
 import datetime
 import traceback
+import urllib.parse  # เพิ่ม Library สำหรับถอดรหัสภาษาไทย
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
@@ -60,7 +61,7 @@ def main():
                     'expression': '/ophthalmologists'
                 }]
             }],
-            'rowLimit': 15 # ดึงมา 15 อันดับแรก
+            'rowLimit': 25 # ดึงมาเพิ่มขึ้นเป็น 25 อันดับ
         }
         res_pages = service.searchanalytics().query(siteUrl=SITE_URL, body=request_pages).execute()
         
@@ -68,9 +69,21 @@ def main():
         if 'rows' in res_pages:
             for row in res_pages['rows']:
                 full_url = row['keys'][0]
-                # ลบส่วนเกินออกให้เหลือแต่ชื่อคุณหมอใน URL เพื่อความสวยงาม
-                clean_name = full_url.replace(SITE_URL, "").replace("ophthalmologists/", "").strip("/")
-                if not clean_name: clean_name = "หน้ารวมแพทย์"
+                
+                # --- ส่วนการทำความสะอาดชื่อ URL ---
+                # 1. ถอดรหัสภาษาไทย (Decode)
+                decoded_url = urllib.parse.unquote(full_url)
+                
+                # 2. ลบ Domain และ Path หลักออก
+                clean_name = decoded_url.replace(SITE_URL, "").replace("ophthalmologists/", "").strip("/")
+                
+                # 3. ลบส่วนภาษา /en/ ออก
+                clean_name = clean_name.replace("en/", "")
+                
+                # 4. ลบส่วนที่ต่อท้ายเครื่องหมาย ? (Query Strings)
+                clean_name = clean_name.split('?')[0]
+                
+                if not clean_name: clean_name = "หน้าหลักหมวดหมู่แพทย์"
                 
                 doctor_pages.append({
                     "page": clean_name,
@@ -98,7 +111,7 @@ def main():
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=4)
             
-        print(f"🚀 สำเร็จ! ดึงข้อมูลรายชื่อแพทย์ได้ {len(doctor_pages)} ท่าน")
+        print(f"🚀 สำเร็จ! ดึงข้อมูลรายชื่อแพทย์และทำความสะอาดชื่อเรียบร้อยแล้ว")
 
     except Exception as e:
         print("❌ Error:", traceback.format_exc())
