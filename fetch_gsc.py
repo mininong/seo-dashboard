@@ -38,12 +38,11 @@ def calculate_change(current, previous):
     return round(((current - previous) / previous) * 100, 1)
 
 def format_dr_name(url_path):
-    """ทำความสะอาดชื่อ URL (แก้ไขเป็น Python Syntax ที่ถูกต้องแล้ว)"""
+    """ทำความสะอาดชื่อ URL (Python Syntax)"""
     decoded = urllib.parse.unquote(url_path)
     clean = decoded.replace(SITE_URL, "").replace("ophthalmologists/", "").strip("/")
     clean = clean.replace("en/", "").split('?')[0]
     if not clean: return "หน้าหลักหมวดหมู่แพทย์"
-    # แก้ไข Syntax Python: ใช้ '-' แทน regex /-/g
     return clean.replace('-', ' ').title()
 
 def main():
@@ -59,14 +58,12 @@ def main():
         credentials = service_account.Credentials.from_service_account_info(creds_dict)
         service = build('searchconsole', 'v1', credentials=credentials)
         
-        # 3. คำนวณช่วงเวลา (90 วัน เทียบ 90 วัน)
         today = datetime.date.today()
         cur_end = (today - datetime.timedelta(days=3))
         cur_start = (cur_end - datetime.timedelta(days=89))
         prev_end = (cur_start - datetime.timedelta(days=1))
         prev_start = (prev_end - datetime.timedelta(days=89))
 
-        # 4. ดึงข้อมูล
         res_cur_total = get_data(service, cur_start.strftime('%Y-%m-%d'), cur_end.strftime('%Y-%m-%d'))
         res_prev_total = get_data(service, prev_start.strftime('%Y-%m-%d'), prev_end.strftime('%Y-%m-%d'))
         res_cur_docs = get_data(service, cur_start.strftime('%Y-%m-%d'), cur_end.strftime('%Y-%m-%d'), dimensions=['page'])
@@ -75,7 +72,6 @@ def main():
         cur_c, cur_i, cur_p = (res_cur_total[0]['clicks'], res_cur_total[0]['impressions'], round(res_cur_total[0]['position'], 1)) if res_cur_total else (0,0,0)
         prev_c, prev_i, prev_p = (res_prev_total[0]['clicks'], res_prev_total[0]['impressions'], round(res_prev_total[0]['position'], 1)) if res_prev_total else (0,0,0)
 
-        # 5. วิเคราะห์การเติบโตรายคน
         prev_docs_map = {row['keys'][0]: row for row in res_prev_docs}
         analysis_list = []
         
@@ -96,10 +92,8 @@ def main():
                 "prev_pos": round(prev_row['position'], 1) if prev_row else 0
             })
 
-        # หา Top Gainer
         top_gainer = sorted(analysis_list, key=lambda x: x['growth'], reverse=True)[0] if analysis_list else None
 
-        # 6. สร้าง JSON
         output_data = {
             "kpi": {
                 "current": {"clicks": f"{int(cur_c):,}", "impressions": f"{int(cur_i):,}", "position": str(cur_p)},
@@ -112,14 +106,14 @@ def main():
             },
             "insights": {
                 "top_gainer": top_gainer,
-                "summary_text": f"อาจารย์ {top_gainer['name']} มียอดคลิกเพิ่มขึ้นสูงสุดในไตรมาสนี้" if top_gainer else "รอการประมวลผล"
+                "summary_text": f"อาจารย์ {top_gainer['name']} มียอดคนเข้าชมพุ่งสูงสุดในไตรมาสนี้" if top_gainer else "รวบรวมข้อมูลสำเร็จ"
             },
             "charts": {
                 "clicksTrend": [int(cur_c*0.4), int(cur_c*0.6), int(cur_c*0.5), int(cur_c*0.8), int(cur_c*0.7), int(cur_c*0.9), int(cur_c)],
                 "positionTrend": [7.5, 7.2, 7.0, 6.8, 6.5, 6.0, float(cur_p)],
                 "devices": [int(cur_c*0.75), int(cur_c*0.20), int(cur_c*0.05)]
             },
-            "doctorPages": sorted(analysis_list, key=lambda x: x['current_clicks'], reverse=True)[:20],
+            "doctorPages": sorted(analysis_list, key=lambda x: x['current_clicks'], reverse=True)[:15],
             "lastUpdated": today.strftime('%d/%m/%Y %H:%M')
         }
         
