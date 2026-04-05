@@ -55,7 +55,7 @@
             "position": 4.6
         },
         {
-            "page": "bunyada-putthirangsiwong?service=oculoplastic",
+            "page": "bunyada-putthirangsiwong",
             "clicks": 77,
             "impressions": 520,
             "position": 4.3
@@ -97,28 +97,88 @@
             "position": 5.2
         },
         {
-            "page": "%E0%B8%A8%E0%B8%B1%E0%B8%81%E0%B8%94%E0%B8%B4%E0%B9%8C%E0%B8%8A%E0%B8%B1%E0%B8%A2-%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%81%E0%B8%B4%E0%B8%88%E0%B8%88%E0%B8%B2",
+            "page": "ศักดิ์ชัย-ใช้กิจจา",
             "clicks": 41,
             "impressions": 759,
             "position": 5.5
         },
         {
-            "page": "en/anun-vongthongsri",
+            "page": "anun-vongthongsri",
             "clicks": 29,
             "impressions": 594,
             "position": 5.5
         },
         {
-            "page": "%E0%B8%98%E0%B8%B1%E0%B8%8D%E0%B8%8D%E0%B8%97%E0%B8%B1%E0%B8%95-%E0%B8%9C%E0%B8%94%E0%B8%B8%E0%B8%87%E0%B9%80%E0%B8%81%E0%B8%B5%E0%B8%A2%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B8%81%E0%B8%B8%E0%B8%A5?service=cataract-center",
+            "page": "ธัญญทัต-ผดุงเกียรติสกุล",
             "clicks": 26,
             "impressions": 480,
             "position": 6.8
         },
         {
-            "page": "en/nawat-watanachai",
+            "page": "nawat-watanachai",
             "clicks": 24,
             "impressions": 284,
             "position": 4.9
+        },
+        {
+            "page": "nutharin-phusitphoykai",
+            "clicks": 22,
+            "impressions": 301,
+            "position": 3.7
+        },
+        {
+            "page": "rosanun-sikarinkul",
+            "clicks": 20,
+            "impressions": 548,
+            "position": 5.3
+        },
+        {
+            "page": "somsiri-sukavatcharin",
+            "clicks": 19,
+            "impressions": 347,
+            "position": 5.3
+        },
+        {
+            "page": "pattaraporn-sirampuj",
+            "clicks": 18,
+            "impressions": 296,
+            "position": 4.5
+        },
+        {
+            "page": "เกศรา-โกสัลล์ประไพ",
+            "clicks": 16,
+            "impressions": 431,
+            "position": 4.1
+        },
+        {
+            "page": "pattaraporn-sirampuj",
+            "clicks": 15,
+            "impressions": 342,
+            "position": 4.9
+        },
+        {
+            "page": "mm/ophthalmologists",
+            "clicks": 14,
+            "impressions": 385,
+            "position": 6.4
+        },
+        {
+            "page": "บังอรรัตน์-เกยุราพันธุ์",
+            "clicks": 14,
+            "impressions": 56,
+            "position": 1.5
+        },
+        {
+            "page": "yanin-suwan",
+            "clicks": 11,
+            "impressions": 171,
+            "position": 6.3
+        },
+        {
+            "page": "wimwipa-dieosuthichat",
+            "clicks": 11,
+            "impressions": 324,
+            "position": 8.0
         }
     ],
     "lastUpdated": "2026-04-05 00:00"
