@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Dashboard สำหรับติดตามและวิเคราะห์ประสิทธิภาพ On-page SEO สำหรับหน้าประวัติแพทย์">
-    <title>BEH SEO Search Performance Dashboard</title>
+    <title>BEH SEO Deep Insights Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -19,11 +19,13 @@
                 extend: {
                     colors: {
                         beh: {
-                            navy: '#004b8d',      // สีน้ำเงินหลัก BEH
-                            dark: '#003366',      // สีน้ำเงินเข้ม
-                            gold: '#c5a059',      // สีทองพรีเมียม
+                            navy: '#004b8d',
+                            dark: '#003366',
+                            gold: '#c5a059',
                             lightgold: '#e2d1a8',
-                            bg: '#f4f7f9'         // พื้นหลังเทานวล
+                            bg: '#f4f7f9',
+                            success: '#10b981',
+                            danger: '#ef4444'
                         }
                     }
                 }
@@ -31,211 +33,163 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #f4f7f9;
-        }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f4f7f9; }
         .card-modern {
-            background: white;
-            border-radius: 1.25rem;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white; border-radius: 1.5rem; border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: all 0.3s ease;
         }
-        .card-modern:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        /* Toast Notification Styling */
-        #toast {
-            visibility: hidden;
-            min-width: 300px;
-            background-color: #003366;
-            color: #fff;
-            text-align: center;
-            border-radius: 12px;
-            padding: 16px;
-            position: fixed;
-            z-index: 100;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 30px;
-            font-size: 14px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { background-color: white; }
-        }
+        .card-modern:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .insight-badge { @apply text-[10px] font-black px-2 py-1 rounded-full; }
+        @media print { .no-print { display: none !important; } body { background-color: white; } }
     </style>
 </head>
 <body class="text-slate-800">
 
     <!-- Toast Element -->
-    <div id="toast">อัปเดตข้อมูลเปรียบเทียบแล้ว</div>
+    <div id="toast" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-beh-dark text-white px-6 py-3 rounded-xl shadow-2xl">อัปเดตข้อมูลแล้ว</div>
 
     <!-- Navbar -->
-    <nav class="bg-beh-navy border-b border-beh-dark sticky top-0 z-50 shadow-lg">
+    <nav class="bg-beh-navy border-b border-beh-dark sticky top-0 z-50 shadow-lg no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 text-white items-center">
                 <div class="flex items-center gap-3">
                     <img src="https://admin.bangkokeyehospital.com/storage/app/files/shares/BangkokEyeHospital/Beh-logo-04-03.png" 
-                         alt="Bangkok Eye Hospital Logo" 
-                         class="h-12 w-auto bg-white p-1.5 rounded-xl shadow-md border border-white/20">
+                         alt="BEH Logo" class="h-10 w-auto bg-white p-1 rounded-lg">
                     <div>
-                        <span class="font-black text-xl block leading-none tracking-tight">BEH INSIGHTS</span>
-                        <span class="text-[9px] text-beh-lightgold font-bold uppercase tracking-[0.2em]">SEO Comparison Report</span>
+                        <span class="font-black text-lg block leading-none tracking-tight">BEH DEEP INSIGHTS</span>
+                        <span class="text-[9px] text-beh-lightgold font-bold uppercase tracking-widest">Search Performance Analysis</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button onclick="fetchAPI()" class="bg-beh-gold hover:bg-opacity-90 text-beh-dark px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center gap-2">
-                        <i id="syncIcon" class="fas fa-sync-alt"></i> <span class="hidden sm:inline font-bold">Refresh Data</span>
-                    </button>
-                    <button onclick="window.print()" class="no-print bg-white/10 hover:bg-white/20 text-white p-2.5 rounded-xl transition-all border border-white/20">
-                        <i class="fas fa-print"></i>
+                    <button onclick="fetchAPI()" class="bg-beh-gold text-beh-dark px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2">
+                        <i id="syncIcon" class="fas fa-sync-alt"></i> <span>อัปเดตข้อมูล</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Header -->
-        <div class="mb-10 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
-            <div>
-                <h1 class="text-3xl font-black text-beh-navy tracking-tighter">SEO Comparison Analytics</h1>
-                <p class="text-slate-500 text-sm mt-1 flex items-center gap-2">
-                    <i class="fas fa-history text-beh-gold"></i> เปรียบเทียบข้อมูลล่าสุด กับ ช่วงเวลาก่อนหน้า (90 วัน)
-                </p>
+        <!-- Header & Insight Summary -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-2">
+                <h1 class="text-3xl font-black text-beh-navy tracking-tighter uppercase">Quarterly SEO Performance</h1>
+                <p class="text-slate-500 text-sm mt-1">วิเคราะห์เปรียบเทียบ <span class="font-bold text-beh-gold underline">90 วันล่าสุด</span> เทียบกับช่วงเวลาก่อนหน้า</p>
             </div>
-            <div class="bg-white border border-beh-navy/10 px-4 py-2 rounded-2xl text-right shadow-sm">
-                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest">Update Frequency: Daily</p>
-                <p id="lastUpdated" class="text-sm font-bold text-beh-navy italic">กำลังโหลดข้อมูล...</p>
-            </div>
-        </div>
-
-        <!-- KPI Cards with Comparison Badges -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <!-- Clicks Card -->
-            <div class="card-modern p-7 border-l-4 border-beh-navy">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="bg-beh-navy/5 text-beh-navy p-3 rounded-2xl"><i class="fas fa-mouse-pointer text-xl"></i></div>
-                    <div id="diff-clicks" class="text-[10px] font-black px-2 py-1 rounded-lg">...</div>
-                </div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Clicks</p>
-                <h3 id="kpi-clicks" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
-                <p class="text-slate-400 text-[10px] mt-3">เทียบกับช่วง 90 วันก่อนหน้า</p>
-            </div>
-
-            <!-- Impressions Card -->
-            <div class="card-modern p-7 border-l-4 border-beh-gold">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="bg-beh-gold/5 text-beh-gold p-3 rounded-2xl"><i class="fas fa-search text-xl"></i></div>
-                    <div id="diff-impressions" class="text-[10px] font-black px-2 py-1 rounded-lg">...</div>
-                </div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Impressions</p>
-                <h3 id="kpi-impressions" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
-                <p class="text-slate-400 text-[10px] mt-3">เทียบกับช่วง 90 วันก่อนหน้า</p>
-            </div>
-
-            <!-- Position Card -->
-            <div class="card-modern p-7 border-l-4 border-emerald-500">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="bg-emerald-50 text-emerald-600 p-3 rounded-2xl"><i class="fas fa-trophy text-xl"></i></div>
-                    <div id="diff-position" class="text-[10px] font-black px-2 py-1 rounded-lg">...</div>
-                </div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg. Position</p>
-                <h3 id="kpi-position" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
-                <p class="text-slate-400 text-[10px] mt-3 font-bold text-emerald-600 italic">อันดับการค้นหาเฉลี่ย</p>
-            </div>
-        </div>
-
-        <!-- NEW: Top 1-3 Ranking Highlights -->
-        <div class="mb-10">
-            <h2 class="text-xl font-black text-beh-navy mb-5 flex items-center gap-3">
-                <i class="fas fa-medal text-beh-gold"></i> อันดับอาจารย์แพทย์ยอดนิยม (Monthly Ranking)
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Rank #1 - BEH GOLD -->
-                <div class="bg-beh-navy rounded-[2rem] p-7 text-white shadow-xl relative overflow-hidden group border-b-8 border-beh-gold">
-                    <div class="absolute top-4 right-6 text-4xl font-black text-beh-gold opacity-30">#1</div>
-                    <i class="fas fa-crown absolute right-[-15px] bottom-[-15px] text-9xl text-beh-gold opacity-10 group-hover:rotate-12 transition-transform duration-500"></i>
-                    <p class="text-[10px] font-bold text-beh-lightgold uppercase tracking-[0.2em] mb-2">Most Popular</p>
-                    <h4 id="rank1-name" class="text-2xl font-black mb-1 capitalize tracking-tight italic">กำลังวิเคราะห์...</h4>
-                    <p id="rank1-val" class="text-white text-sm font-bold tracking-wide">0 Clicks</p>
-                </div>
-                <!-- Rank #2 - BEH NAVY DARK -->
-                <div class="bg-beh-dark rounded-[2rem] p-7 text-white shadow-xl relative overflow-hidden group border-b-8 border-slate-400">
-                    <div class="absolute top-4 right-6 text-4xl font-black text-slate-400 opacity-30">#2</div>
-                    <i class="fas fa-award absolute right-[-15px] bottom-[-15px] text-9xl text-white/5 group-hover:scale-110 transition-transform duration-500"></i>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 mb-2">High Demand</p>
-                    <h4 id="rank2-name" class="text-2xl font-black mb-1 capitalize tracking-tight">กำลังวิเคราะห์...</h4>
-                    <p id="rank2-val" class="text-slate-300 text-sm font-bold tracking-wide">0 Clicks</p>
-                </div>
-                <!-- Rank #3 - BEH NAVY LIGHT -->
-                <div class="bg-white rounded-[2rem] p-7 border-4 border-beh-navy/10 shadow-xl relative overflow-hidden group border-b-8 border-amber-600/30">
-                    <div class="absolute top-4 right-6 text-4xl font-black text-beh-navy/10 opacity-30">#3</div>
-                    <i class="fas fa-star absolute right-[-15px] bottom-[-15px] text-9xl text-beh-navy/5 group-hover:translate-y-2 transition-transform duration-500"></i>
-                    <p class="text-[10px] font-black text-beh-navy/40 uppercase tracking-[0.2em] mb-2">Rising Star</p>
-                    <h4 id="rank3-name" class="text-2xl font-black text-beh-navy mb-1 capitalize tracking-tight">กำลังวิเคราะห์...</h4>
-                    <p id="rank3-val" class="text-slate-500 text-sm font-bold tracking-wide">0 Clicks</p>
+            <div class="card-modern bg-beh-navy p-5 flex items-center gap-4 text-white relative overflow-hidden">
+                <div class="absolute right-[-10px] top-[-10px] text-white opacity-10 text-6xl"><i class="fas fa-lightbulb"></i></div>
+                <div class="bg-white/20 p-3 rounded-2xl text-2xl z-10"><i class="fas fa-brain"></i></div>
+                <div class="z-10">
+                    <p class="text-[10px] uppercase font-bold opacity-60">Executive Summary</p>
+                    <h3 id="insight-summary" class="font-bold text-sm tracking-tight">กำลังคำนวณ Insight...</h3>
                 </div>
             </div>
         </div>
 
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-            <div class="card-modern p-7 lg:col-span-2">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-black text-beh-navy">แนวโน้มประสิทธิภาพ (Performance Trend)</h3>
-                    <div class="flex gap-4 text-[10px] font-black uppercase text-slate-400">
-                        <span class="flex items-center gap-1"><i class="fas fa-square text-beh-navy"></i> Clicks</span>
-                        <span class="flex items-center gap-1"><i class="fas fa-square text-emerald-500"></i> Ranking</span>
+        <!-- 3 Comparison KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-center md:text-left">
+            <!-- Clicks Comparison -->
+            <div class="card-modern p-6 border-t-4 border-beh-navy">
+                <div class="flex justify-between items-start mb-2">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Clicks</p>
+                    <span id="badge-clicks" class="insight-badge">...</span>
+                </div>
+                <div class="flex items-baseline gap-2 justify-center md:justify-start">
+                    <h3 id="cur-clicks" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
+                    <p class="text-xs text-slate-400 font-bold uppercase">Actual</p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-bold uppercase">Previous Period:</span>
+                    <span id="prev-clicks" class="font-bold text-slate-500 italic">...</span>
+                </div>
+            </div>
+
+            <!-- Impressions Comparison -->
+            <div class="card-modern p-6 border-t-4 border-beh-gold text-center md:text-left">
+                <div class="flex justify-between items-start mb-2">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Impressions</p>
+                    <span id="badge-impressions" class="insight-badge">...</span>
+                </div>
+                <div class="flex items-baseline gap-2 justify-center md:justify-start">
+                    <h3 id="cur-impressions" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
+                    <p class="text-xs text-slate-400 font-bold uppercase">Actual</p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-bold uppercase">Previous Period:</span>
+                    <span id="prev-impressions" class="font-bold text-slate-500 italic">...</span>
+                </div>
+            </div>
+
+            <!-- Position Comparison -->
+            <div class="card-modern p-6 border-t-4 border-beh-success">
+                <div class="flex justify-between items-start mb-2">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Avg. Position</p>
+                    <span id="badge-position" class="insight-badge">...</span>
+                </div>
+                <div class="flex items-baseline gap-2 justify-center md:justify-start">
+                    <h3 id="cur-position" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
+                    <p class="text-xs text-slate-400 font-bold uppercase">Actual</p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-bold uppercase">Previous Period:</span>
+                    <span id="prev-position" class="font-bold text-slate-500 italic">...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deep Insight: Success Story (Top Gainer) -->
+        <div id="gainer-card" class="card-modern p-8 bg-gradient-to-br from-beh-navy to-beh-dark text-white mb-10 overflow-hidden relative hidden border-b-[10px] border-beh-gold">
+            <i class="fas fa-rocket absolute right-[-20px] bottom-[-20px] text-9xl opacity-10 animate-pulse"></i>
+            <div class="relative z-10">
+                <span class="bg-beh-gold text-beh-dark text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter mb-4 inline-block shadow-lg">SEO Success Story</span>
+                <h2 class="text-4xl font-black tracking-tighter mb-2 italic">อาจารย์ <span id="gainer-name">...</span></h2>
+                <p class="text-beh-lightgold text-lg font-medium">ทำสถิติยอดคลิกเพิ่มสูงขึ้นอย่างโดดเด่นถึง <span id="gainer-val" class="font-black text-white text-3xl">...</span> คลิก!</p>
+                <div class="mt-6 flex gap-6">
+                    <div class="bg-white/10 px-5 py-2 rounded-2xl border border-white/10">
+                        <p class="text-[9px] uppercase font-black opacity-60 tracking-widest">Current SEO Rank</p>
+                        <p id="gainer-pos" class="font-black text-2xl text-beh-gold">...</p>
+                    </div>
+                    <div class="bg-white/10 px-5 py-2 rounded-2xl border border-white/10">
+                        <p class="text-[9px] uppercase font-black opacity-60 tracking-widest">Growth Rate</p>
+                        <p class="font-black text-2xl text-beh-success">HIGH</p>
                     </div>
                 </div>
-                <div class="h-72 w-full">
-                    <canvas id="mainChart"></canvas>
-                </div>
-            </div>
-            <div class="card-modern p-7 text-center">
-                <h3 class="text-lg font-black text-beh-navy mb-6">สรุปผลการเปรียบเทียบ</h3>
-                <div class="py-10">
-                   <div id="growth-summary" class="text-3xl font-black text-emerald-600 tracking-tighter animate-pulse">SEO IS GROWING</div>
-                   <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest">Current Trend Analysis</p>
-                </div>
-                <div class="h-40">
-                    <canvas id="deviceChart"></canvas>
-                </div>
             </div>
         </div>
 
-        <!-- Full Table Breakdown -->
+        <!-- Trend Chart -->
+        <div class="card-modern p-8 mb-10">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-black text-beh-navy uppercase tracking-tighter"><i class="fas fa-chart-line mr-2 text-beh-gold"></i> Performance Trend (Latest Period)</h3>
+                <div id="growth-summary" class="text-[10px] font-black px-3 py-1 rounded-full border border-current">...</div>
+            </div>
+            <div class="h-80">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Comparison Table Breakdown -->
         <div class="card-modern overflow-hidden">
-            <div class="bg-beh-navy/5 px-8 py-5 border-b border-beh-navy/10 flex justify-between items-center">
-                <h3 class="text-md font-black text-beh-navy tracking-tight uppercase">ตารางวิเคราะห์รายบุคคล (Dr. Individual Analytics)</h3>
-                <div class="text-[10px] font-black text-beh-gold uppercase tracking-[0.2em]">Verified Data</div>
+            <div class="bg-beh-navy/5 px-8 py-6 border-b border-beh-navy/10 flex justify-between items-center">
+                <div>
+                    <h3 class="text-md font-black text-beh-navy uppercase tracking-tighter">Individual Performance Breakdown</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">เปรียบเทียบสถิติรายชื่อแพทย์เจาะจงรายบุคคล</p>
+                </div>
+                <div id="lastUpdated" class="text-[10px] font-black text-beh-navy bg-white px-3 py-1 rounded-full shadow-sm border border-beh-navy/10">...</div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-white border-b border-slate-100 text-[11px] text-slate-400 font-black uppercase tracking-widest">
-                            <th class="px-8 py-5">รายชื่อแพทย์ (ID)</th>
-                            <th class="px-8 py-5 text-right">จำนวนคลิก</th>
-                            <th class="px-8 py-5 text-right">การมองเห็น</th>
-                            <th class="px-8 py-5 text-right font-bold text-beh-navy">อันดับเฉลี่ย</th>
+                        <tr class="bg-white border-b border-slate-100 text-[10px] text-slate-400 font-black uppercase tracking-widest">
+                            <th class="px-8 py-5">ชื่ออาจารย์แพทย์</th>
+                            <th class="px-8 py-5 text-center">ปัจจุบัน (คลิก)</th>
+                            <th class="px-8 py-5 text-center">ก่อนหน้า (คลิก)</th>
+                            <th class="px-8 py-5 text-right font-black text-beh-navy">การเปลี่ยนแปลง (คลิกจริง)</th>
                         </tr>
                     </thead>
                     <tbody id="doctorTableBody" class="divide-y divide-slate-100 bg-white">
-                        <tr><td colspan="4" class="px-8 py-20 text-center text-slate-300 italic font-medium tracking-wide">กำลังดึงข้อมูลจากฐานข้อมูล BEH...</td></tr>
+                        <tr><td colspan="4" class="px-8 py-20 text-center text-slate-300 italic font-medium tracking-wide animate-pulse">ระบบกำลังประมวลผลข้อมูลเปรียบเทียบเชิงลึก...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -243,72 +197,52 @@
 
         <!-- Footer -->
         <footer class="mt-16 pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-6 no-print text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
-            <div>© 2026 Bangkok Eye Hospital - SEO Internal Report</div>
+            <div>© 2026 Bangkok Eye Hospital - SEO Internal Analysis Report</div>
             <div class="flex items-center gap-3">
-                <span class="flex items-center gap-1 text-beh-navy"><i class="fas fa-user-shield"></i> Analyst: ณัฐธยาน์</span>
+                <span class="flex items-center gap-1 text-beh-navy"><i class="fas fa-shield-halved"></i> Analyst: ณัฐธยาน์</span>
             </div>
         </footer>
-
     </main>
 
     <script>
-        let mainChart, deviceChart;
-
-        // ฟังก์ชันล้างชื่อ (Decode & Format)
-        function formatDrName(str) {
-            if (!str) return 'Unknown';
-            if (str === 'หน้าหลักหมวดหมู่แพทย์') return str;
-            let name = str.replace(/-/g, ' ').trim();
-            return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        }
-
-        // ฟังก์ชันสร้าง Badge เปรียบเทียบ
-        function updateComparisonBadge(elementId, value) {
-            const el = document.getElementById(elementId);
-            if (!value) {
-                el.classList.add('hidden');
-                return;
-            }
-            
-            const isPositive = parseFloat(value) >= 0;
-            const colorClass = isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600';
-            const icon = isPositive ? '↑' : '↓';
-            
-            el.innerHTML = `${icon} ${Math.abs(value)}%`;
-            el.className = `text-[10px] font-black px-2 py-1 rounded-lg ${colorClass}`;
-        }
+        let mainChart;
 
         function initCharts() {
-            const mainCtx = document.getElementById('mainChart').getContext('2d');
-            mainChart = new Chart(mainCtx, {
-                type: 'bar',
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            mainChart = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7'],
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Latest'],
                     datasets: [
-                        { label: 'Clicks', data: [0,0,0,0,0,0,0], backgroundColor: '#004b8d', borderRadius: 6, yAxisID: 'y' },
-                        { label: 'Pos', data: [0,0,0,0,0,0,0], type: 'line', borderColor: '#10b981', borderWidth: 4, pointBackgroundColor: '#fff', pointRadius: 5, tension: 0.4, yAxisID: 'y1' }
+                        { 
+                            label: 'Actual Clicks', 
+                            data: [0,0,0,0,0,0,0], 
+                            borderColor: '#004b8d', 
+                            backgroundColor: 'rgba(0, 75, 141, 0.1)', 
+                            fill: true, 
+                            tension: 0.4, 
+                            borderWidth: 4,
+                            pointBackgroundColor: '#fff',
+                            pointRadius: 5
+                        },
+                        { 
+                            label: 'Search Position', 
+                            data: [0,0,0,0,0,0,0], 
+                            borderColor: '#c5a059', 
+                            yAxisID: 'y1', 
+                            tension: 0.4, 
+                            borderDash: [5, 5],
+                            borderWidth: 2
+                        }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                        y1: { reverse: true, min: 1, max: 20, position: 'right', grid: { display: false } }
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, title: { display: true, text: 'Clicks', font: { weight: 'bold' } } },
+                        y1: { reverse: true, min: 1, max: 20, position: 'right', grid: { display: false }, title: { display: true, text: 'Ranking', font: { weight: 'bold' } } }
                     }
-                }
-            });
-
-            const deviceCtx = document.getElementById('deviceChart').getContext('2d');
-            deviceChart = new Chart(deviceCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['มือถือ', 'คอมฯ', 'แท็บเล็ต'],
-                    datasets: [{ data: [1, 1, 1], backgroundColor: ['#004b8d', '#c5a059', '#cbd5e1'], borderWidth: 4, borderColor: '#fff' }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '80%',
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { weight: 'bold', size: 9 } } } }
                 }
             });
         }
@@ -316,111 +250,109 @@
         function showToast(message) {
             const t = document.getElementById("toast");
             t.innerText = message;
-            t.className = "show";
-            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
+            t.classList.remove("hidden");
+            setTimeout(() => { t.classList.add("hidden"); }, 3000);
         }
 
-        async function fetchAPI(silent = false) {
-            const sync = document.getElementById('syncIcon');
-            if (sync) sync.classList.add('fa-spin');
+        function updateBadge(id, val) {
+            const el = document.getElementById(id);
+            const num = parseFloat(val);
+            const isPos = num >= 0;
+            const colorClass = isPos ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600';
+            el.className = `insight-badge ${colorClass} font-black italic`;
+            el.innerText = `${isPos ? '↑' : '↓'} ${Math.abs(num)}%`;
+        }
+
+        async function fetchAPI() {
+            const syncIcon = document.getElementById('syncIcon');
+            syncIcon.classList.add('fa-spin');
 
             try {
                 const response = await fetch('data.json?t=' + Date.now());
-                if (!response.ok) throw new Error('ไม่พบฐานข้อมูล data.json');
+                if (!response.ok) throw new Error('data.json file not found');
                 const data = await response.json();
 
-                // 1. Update Core KPIs & Comparisons
-                document.getElementById('kpi-clicks').innerText = data.kpi.clicks;
-                document.getElementById('kpi-impressions').innerText = data.kpi.impressions;
-                document.getElementById('kpi-position').innerText = data.kpi.position;
-                document.getElementById('lastUpdated').innerText = data.lastUpdated;
+                // 1. Update Core Comparison Cards
+                document.getElementById('cur-clicks').innerText = data.kpi.current.clicks;
+                document.getElementById('prev-clicks').innerText = data.kpi.previous.clicks;
+                document.getElementById('cur-impressions').innerText = data.kpi.current.impressions;
+                document.getElementById('prev-impressions').innerText = data.kpi.previous.impressions;
+                document.getElementById('cur-position').innerText = data.kpi.current.position;
+                document.getElementById('prev-position').innerText = data.kpi.previous.position;
 
-                // อัปเดต % การเติบโต (ถ้ามีข้อมูลใน JSON)
-                if (data.comparison) {
-                    updateComparisonBadge('diff-clicks', data.comparison.clicksChange);
-                    updateComparisonBadge('diff-impressions', data.comparison.impressionsChange);
-                    updateComparisonBadge('diff-position', data.comparison.positionChange);
-                    
-                    const growthSummary = document.getElementById('growth-summary');
-                    if (parseFloat(data.comparison.clicksChange) > 0) {
-                        growthSummary.innerText = "SEO IS GROWING";
-                        growthSummary.className = "text-3xl font-black text-emerald-600 tracking-tighter animate-pulse";
-                    } else {
-                        growthSummary.innerText = "NEEDS ATTENTION";
-                        growthSummary.className = "text-3xl font-black text-red-600 tracking-tighter";
-                    }
+                // 2. Growth Badges & Summary
+                updateBadge('badge-clicks', data.kpi.changes.clicks);
+                updateBadge('badge-impressions', data.kpi.changes.impressions);
+                updateBadge('badge-position', data.kpi.changes.position);
+                document.getElementById('insight-summary').innerText = data.insights.summary_text;
+
+                // 3. SEO Success Story (Gainer Card)
+                if (data.insights.top_gainer) {
+                    const card = document.getElementById('gainer-card');
+                    card.classList.remove('hidden');
+                    document.getElementById('gainer-name').innerText = data.insights.top_gainer.name;
+                    document.getElementById('gainer-val').innerText = `+${data.insights.top_gainer.growth.toLocaleString()}`;
+                    document.getElementById('gainer-pos').innerText = `#${data.insights.top_gainer.current_pos}`;
                 }
 
-                // 2. Update Graph & Chart
+                // 4. Individual Comparison Table
+                const body = document.getElementById('doctorTableBody');
+                body.innerHTML = '';
+                
+                // Sort by current performance to show top actors
+                data.doctorPages.forEach(dr => {
+                    const diff = dr.growth;
+                    const color = diff > 0 ? 'text-beh-success' : (diff < 0 ? 'text-beh-danger' : 'text-slate-400');
+                    const icon = diff > 0 ? '↑' : (diff < 0 ? '↓' : '-');
+                    
+                    body.innerHTML += `
+                        <tr class="hover:bg-beh-navy/5 transition-all duration-150">
+                            <td class="px-8 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-2xl bg-beh-navy/5 flex items-center justify-center text-beh-navy border border-beh-navy/10 shadow-sm">
+                                        <i class="fas fa-user-md text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-black text-slate-800 text-sm tracking-tight italic uppercase">${dr.name}</div>
+                                        <div class="text-[9px] text-slate-400 font-mono tracking-tighter uppercase">${dr.url.replace('https://www.bangkokeyehospital.com/', '')}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5 text-center font-black text-beh-navy text-base">${dr.current_clicks.toLocaleString()}</td>
+                            <td class="px-8 py-5 text-center text-slate-400 font-bold">${dr.prev_clicks.toLocaleString()}</td>
+                            <td class="px-8 py-5 text-right font-black ${color} text-base">
+                                <span class="bg-current bg-opacity-5 px-3 py-1 rounded-full">
+                                    ${icon} ${Math.abs(diff).toLocaleString()}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                // 5. Update Status & Chart
+                const growthSummary = document.getElementById('growth-summary');
+                const isGrowing = parseFloat(data.kpi.changes.clicks) >= 0;
+                growthSummary.innerText = isGrowing ? 'TREND: GROWTH' : 'TREND: STAGNANT';
+                growthSummary.className = `text-[10px] font-black px-3 py-1 rounded-full border-2 ${isGrowing ? 'text-beh-success border-beh-success' : 'text-beh-danger border-beh-danger'}`;
+
                 mainChart.data.datasets[0].data = data.charts.clicksTrend;
                 mainChart.data.datasets[1].data = data.charts.positionTrend;
                 mainChart.update();
-
-                deviceChart.data.datasets[0].data = data.charts.devices;
-                deviceChart.update();
-
-                // 3. Logic: Calculate TOP 1-3 Ranking & Fill Table
-                if (data.doctorPages && data.doctorPages.length > 0) {
-                    const doctors = data.doctorPages;
-                    const sortedDoctors = [...doctors].sort((a,b) => b.clicks - a.clicks);
-
-                    if (sortedDoctors[0]) {
-                        document.getElementById('rank1-name').innerText = formatDrName(sortedDoctors[0].page);
-                        document.getElementById('rank1-val').innerText = sortedDoctors[0].clicks.toLocaleString() + ' Clicks';
-                    }
-                    if (sortedDoctors[1]) {
-                        document.getElementById('rank2-name').innerText = formatDrName(sortedDoctors[1].page);
-                        document.getElementById('rank2-val').innerText = sortedDoctors[1].clicks.toLocaleString() + ' Clicks';
-                    }
-                    if (sortedDoctors[2]) {
-                        document.getElementById('rank3-name').innerText = formatDrName(sortedDoctors[2].page);
-                        document.getElementById('rank3-val').innerText = sortedDoctors[2].clicks.toLocaleString() + ' Clicks';
-                    }
-
-                    const tableBody = document.getElementById('doctorTableBody');
-                    tableBody.innerHTML = '';
-                    
-                    doctors.forEach(dr => {
-                        const drNameDisplay = formatDrName(dr.page);
-                        const row = `
-                            <tr class="hover:bg-beh-navy/5 transition-colors duration-150">
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-2xl bg-beh-navy/5 flex items-center justify-center text-beh-navy shadow-sm border border-beh-navy/10">
-                                            <i class="fas fa-user-md text-sm"></i>
-                                        </div>
-                                        <div>
-                                            <div class="font-black text-beh-navy text-sm tracking-tight">${drNameDisplay}</div>
-                                            <div class="text-[9px] text-slate-400 font-mono tracking-widest uppercase mt-0.5">${dr.page}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5 text-right font-black text-beh-navy text-base">${dr.clicks.toLocaleString()}</td>
-                                <td class="px-8 py-5 text-right text-slate-500 font-bold">${dr.impressions.toLocaleString()}</td>
-                                <td class="px-8 py-5 text-right">
-                                    <span class="px-4 py-1.5 ${dr.position <= 5 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-400 border-slate-200'} border-2 text-[11px] font-black rounded-full shadow-sm">
-                                        ${dr.position}
-                                    </span>
-                                </td>
-                            </tr>
-                        `;
-                        tableBody.innerHTML += row;
-                    });
-                }
-
-                if (!silent) showToast('เชื่อมต่อระบบรายงานเปรียบเทียบสำเร็จ!');
+                
+                document.getElementById('lastUpdated').innerText = `LAST SYNC: ${data.lastUpdated}`;
+                showToast('อัปเดต Insight ล่าสุดสำเร็จ');
 
             } catch (error) {
                 console.error(error);
-                if (!silent) showToast('การเชื่อมต่อล้มเหลว: ' + error.message);
+                showToast('การดึงข้อมูลผิดพลาด: ' + error.message);
             } finally {
-                if (sync) sync.classList.remove('fa-spin');
+                syncIcon.classList.remove('fa-spin');
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             initCharts();
-            fetchAPI(true);
+            fetchAPI();
         });
     </script>
 </body>
