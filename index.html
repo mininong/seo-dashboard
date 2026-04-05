@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Dashboard สำหรับติดตามและวิเคราะห์ประสิทธิภาพ On-page SEO สำหรับหน้าประวัติแพทย์">
-    <title>BEH SEO Deep Insights Dashboard</title>
+    <title>BEH SEO Search Performance Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -19,11 +19,11 @@
                 extend: {
                     colors: {
                         beh: {
-                            navy: '#004b8d',
-                            dark: '#003366',
-                            gold: '#c5a059',
+                            navy: '#004b8d',      // สีน้ำเงินหลัก BEH
+                            dark: '#003366',      // สีน้ำเงินเข้ม
+                            gold: '#c5a059',      // สีทองพรีเมียม
                             lightgold: '#e2d1a8',
-                            bg: '#f4f7f9',
+                            bg: '#f4f7f9',        // พื้นหลังเทานวล
                             success: '#10b981',
                             danger: '#ef4444'
                         }
@@ -36,17 +36,21 @@
         body { font-family: 'Sarabun', sans-serif; background-color: #f4f7f9; }
         .card-modern {
             background: white; border-radius: 1.5rem; border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .card-modern:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .insight-badge { @apply text-[10px] font-black px-2 py-1 rounded-full; }
+        .insight-badge { @apply text-[10px] font-black px-2 py-1 rounded-lg shadow-sm; }
+        .table-container::-webkit-scrollbar { height: 6px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         @media print { .no-print { display: none !important; } body { background-color: white; } }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <!-- Toast Element -->
-    <div id="toast" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-beh-dark text-white px-6 py-3 rounded-xl shadow-2xl">อัปเดตข้อมูลแล้ว</div>
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-[100] bg-beh-dark text-white px-6 py-3 rounded-2xl shadow-2xl border border-white/20 animate-bounce">
+        <i class="fas fa-check-circle mr-2 text-beh-gold"></i> <span id="toast-msg">อัปเดตข้อมูลแล้ว</span>
+    </div>
 
     <!-- Navbar -->
     <nav class="bg-beh-navy border-b border-beh-dark sticky top-0 z-50 shadow-lg no-print">
@@ -54,159 +58,221 @@
             <div class="flex justify-between h-16 text-white items-center">
                 <div class="flex items-center gap-3">
                     <img src="https://admin.bangkokeyehospital.com/storage/app/files/shares/BangkokEyeHospital/Beh-logo-04-03.png" 
-                         alt="BEH Logo" class="h-10 w-auto bg-white p-1 rounded-lg">
+                         alt="BEH Logo" class="h-10 w-auto bg-white p-1 rounded-xl shadow-inner">
                     <div>
-                        <span class="font-black text-lg block leading-none tracking-tight">BEH DEEP INSIGHTS</span>
-                        <span class="text-[9px] text-beh-lightgold font-bold uppercase tracking-widest">Search Performance Analysis</span>
+                        <span class="font-black text-xl block leading-none tracking-tighter uppercase italic">BEH INSIGHTS</span>
+                        <span class="text-[9px] text-beh-lightgold font-bold uppercase tracking-[0.15em]">SEO Deep Analysis Report</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button onclick="fetchAPI()" class="bg-beh-gold text-beh-dark px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2">
-                        <i id="syncIcon" class="fas fa-sync-alt"></i> <span>อัปเดตข้อมูล</span>
+                    <button onclick="fetchAPI()" class="bg-beh-gold text-beh-dark px-5 py-2.5 rounded-xl text-xs font-black transition-all shadow-md flex items-center gap-2 hover:scale-105 active:scale-95">
+                        <i id="syncIcon" class="fas fa-sync-alt"></i> <span class="hidden sm:inline italic uppercase">Refresh Analysis</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         
-        <!-- Header & Insight Summary -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="lg:col-span-2">
-                <h1 class="text-3xl font-black text-beh-navy tracking-tighter uppercase">Quarterly SEO Performance</h1>
-                <p class="text-slate-500 text-sm mt-1">วิเคราะห์เปรียบเทียบ <span class="font-bold text-beh-gold underline">90 วันล่าสุด</span> เทียบกับช่วงเวลาก่อนหน้า</p>
+        <!-- Welcome Section -->
+        <div class="mb-10 flex flex-col md:flex-row md:justify-between md:items-center gap-6">
+            <div>
+                <h1 class="text-3xl font-black text-beh-navy tracking-tighter uppercase">Quarterly Growth Analytics</h1>
+                <p class="text-slate-500 text-sm mt-1 flex items-center gap-2 italic">
+                    <i class="fas fa-history text-beh-gold"></i> เปรียบเทียบข้อมูล 90 วันล่าสุด กับช่วงก่อนหน้า (Q-on-Q)
+                </p>
             </div>
-            <div class="card-modern bg-beh-navy p-5 flex items-center gap-4 text-white relative overflow-hidden">
-                <div class="absolute right-[-10px] top-[-10px] text-white opacity-10 text-6xl"><i class="fas fa-lightbulb"></i></div>
-                <div class="bg-white/20 p-3 rounded-2xl text-2xl z-10"><i class="fas fa-brain"></i></div>
-                <div class="z-10">
-                    <p class="text-[10px] uppercase font-bold opacity-60">Executive Summary</p>
-                    <h3 id="insight-summary" class="font-bold text-sm tracking-tight">กำลังคำนวณ Insight...</h3>
+            <div class="bg-white border border-beh-navy/10 px-6 py-3 rounded-2xl text-right shadow-sm border-r-8 border-r-beh-gold">
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest">Server Response Time: Stable</p>
+                <p id="lastUpdated" class="text-sm font-bold text-beh-navy italic tracking-tight">Syncing Data...</p>
+            </div>
+        </div>
+
+        <!-- 3 Big Scorecards with Comparisons -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- Clicks Card -->
+            <div class="card-modern p-7 border-t-8 border-beh-navy">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-beh-navy/5 text-beh-navy p-3 rounded-2xl"><i class="fas fa-mouse-pointer text-xl"></i></div>
+                    <span id="badge-clicks" class="insight-badge italic tracking-tighter uppercase font-black">...</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Actual Website Clicks</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 id="cur-clicks" class="text-5xl font-black text-beh-navy tracking-tighter">...</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase underline decoration-beh-gold decoration-2 underline-offset-4">This Period</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px] font-bold">
+                    <span class="text-slate-400 uppercase tracking-tighter">Previous 90 Days:</span>
+                    <span id="prev-clicks" class="text-slate-500 italic tracking-widest">...</span>
+                </div>
+            </div>
+
+            <!-- Impressions Card -->
+            <div class="card-modern p-7 border-t-8 border-beh-gold">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-beh-gold/5 text-beh-gold p-3 rounded-2xl"><i class="fas fa-eye text-xl"></i></div>
+                    <span id="badge-impressions" class="insight-badge italic tracking-tighter uppercase font-black">...</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Impressions</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 id="cur-impressions" class="text-5xl font-black text-beh-navy tracking-tighter">...</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase underline decoration-beh-gold decoration-2 underline-offset-4">Visibility</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px] font-bold">
+                    <span class="text-slate-400 uppercase tracking-tighter">Previous 90 Days:</span>
+                    <span id="prev-impressions" class="text-slate-500 italic tracking-widest">...</span>
+                </div>
+            </div>
+
+            <!-- Position Card -->
+            <div class="card-modern p-7 border-t-8 border-beh-success">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-emerald-50 text-beh-success p-3 rounded-2xl"><i class="fas fa-chart-line text-xl"></i></div>
+                    <span id="badge-position" class="insight-badge italic tracking-tighter uppercase font-black">...</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg. SERP Position</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 id="cur-position" class="text-5xl font-black text-beh-navy tracking-tighter">...</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase underline decoration-beh-gold decoration-2 underline-offset-4">Ranking</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px] font-bold">
+                    <span class="text-slate-400 uppercase tracking-tighter">Previous 90 Days:</span>
+                    <span id="prev-position" class="text-slate-500 italic tracking-widest">...</span>
                 </div>
             </div>
         </div>
 
-        <!-- 3 Comparison KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-center md:text-left">
-            <!-- Clicks Comparison -->
-            <div class="card-modern p-6 border-t-4 border-beh-navy">
-                <div class="flex justify-between items-start mb-2">
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Clicks</p>
-                    <span id="badge-clicks" class="insight-badge">...</span>
-                </div>
-                <div class="flex items-baseline gap-2 justify-center md:justify-start">
-                    <h3 id="cur-clicks" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
-                    <p class="text-xs text-slate-400 font-bold uppercase">Actual</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px]">
-                    <span class="text-slate-400 font-bold uppercase">Previous Period:</span>
-                    <span id="prev-clicks" class="font-bold text-slate-500 italic">...</span>
-                </div>
+        <!-- AI Summary Header -->
+        <div class="card-modern bg-beh-dark p-6 mb-10 text-white flex flex-col md:flex-row items-center gap-6 relative overflow-hidden border-b-8 border-beh-gold shadow-2xl">
+            <div class="absolute left-[-20px] top-[-20px] text-white opacity-5 text-[10rem] italic font-black">AI</div>
+            <div class="bg-beh-gold p-4 rounded-3xl text-beh-dark text-4xl shadow-lg animate-pulse">
+                <i class="fas fa-brain"></i>
             </div>
-
-            <!-- Impressions Comparison -->
-            <div class="card-modern p-6 border-t-4 border-beh-gold text-center md:text-left">
-                <div class="flex justify-between items-start mb-2">
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Impressions</p>
-                    <span id="badge-impressions" class="insight-badge">...</span>
-                </div>
-                <div class="flex items-baseline gap-2 justify-center md:justify-start">
-                    <h3 id="cur-impressions" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
-                    <p class="text-xs text-slate-400 font-bold uppercase">Actual</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px]">
-                    <span class="text-slate-400 font-bold uppercase">Previous Period:</span>
-                    <span id="prev-impressions" class="font-bold text-slate-500 italic">...</span>
-                </div>
-            </div>
-
-            <!-- Position Comparison -->
-            <div class="card-modern p-6 border-t-4 border-beh-success">
-                <div class="flex justify-between items-start mb-2">
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Avg. Position</p>
-                    <span id="badge-position" class="insight-badge">...</span>
-                </div>
-                <div class="flex items-baseline gap-2 justify-center md:justify-start">
-                    <h3 id="cur-position" class="text-4xl font-black text-beh-navy tracking-tighter">...</h3>
-                    <p class="text-xs text-slate-400 font-bold uppercase">Actual</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center text-[11px]">
-                    <span class="text-slate-400 font-bold uppercase">Previous Period:</span>
-                    <span id="prev-position" class="font-bold text-slate-500 italic">...</span>
-                </div>
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-[0.3em] text-beh-lightgold opacity-80 mb-1">Deep Insight Summary</p>
+                <h2 id="insight-summary" class="text-xl md:text-2xl font-black tracking-tight italic">
+                    ระบบกำลังประมวลผลกลยุทธ์ SEO ที่ดีที่สุดให้คุณ...
+                </h2>
             </div>
         </div>
 
-        <!-- Deep Insight: Success Story (Top Gainer) -->
-        <div id="gainer-card" class="card-modern p-8 bg-gradient-to-br from-beh-navy to-beh-dark text-white mb-10 overflow-hidden relative hidden border-b-[10px] border-beh-gold">
-            <i class="fas fa-rocket absolute right-[-20px] bottom-[-20px] text-9xl opacity-10 animate-pulse"></i>
-            <div class="relative z-10">
-                <span class="bg-beh-gold text-beh-dark text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter mb-4 inline-block shadow-lg">SEO Success Story</span>
-                <h2 class="text-4xl font-black tracking-tighter mb-2 italic">อาจารย์ <span id="gainer-name">...</span></h2>
-                <p class="text-beh-lightgold text-lg font-medium">ทำสถิติยอดคลิกเพิ่มสูงขึ้นอย่างโดดเด่นถึง <span id="gainer-val" class="font-black text-white text-3xl">...</span> คลิก!</p>
-                <div class="mt-6 flex gap-6">
-                    <div class="bg-white/10 px-5 py-2 rounded-2xl border border-white/10">
-                        <p class="text-[9px] uppercase font-black opacity-60 tracking-widest">Current SEO Rank</p>
-                        <p id="gainer-pos" class="font-black text-2xl text-beh-gold">...</p>
+        <!-- Success Story: Top Gainer Banner -->
+        <div id="gainer-card" class="card-modern p-10 bg-gradient-to-br from-beh-navy to-beh-dark text-white mb-12 overflow-hidden relative hidden shadow-beh-navy shadow-2xl">
+            <i class="fas fa-crown absolute right-[-10px] bottom-[-20px] text-[15rem] text-white opacity-5 font-black"></i>
+            <div class="relative z-10 flex flex-col md:flex-row gap-10 items-center">
+                <div class="relative">
+                    <div class="w-32 h-32 rounded-full bg-beh-gold flex items-center justify-center text-beh-dark text-6xl shadow-[0_0_50px_rgba(197,160,89,0.5)]">
+                        <i class="fas fa-user-doctor"></i>
                     </div>
-                    <div class="bg-white/10 px-5 py-2 rounded-2xl border border-white/10">
-                        <p class="text-[9px] uppercase font-black opacity-60 tracking-widest">Growth Rate</p>
-                        <p class="font-black text-2xl text-beh-success">HIGH</p>
+                    <div class="absolute -bottom-2 -right-2 bg-white text-beh-navy w-10 h-10 rounded-full flex items-center justify-center font-black shadow-lg border-4 border-beh-navy">
+                        #1
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Trend Chart -->
-        <div class="card-modern p-8 mb-10">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-black text-beh-navy uppercase tracking-tighter"><i class="fas fa-chart-line mr-2 text-beh-gold"></i> Performance Trend (Latest Period)</h3>
-                <div id="growth-summary" class="text-[10px] font-black px-3 py-1 rounded-full border border-current">...</div>
-            </div>
-            <div class="h-80">
-                <canvas id="mainChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Comparison Table Breakdown -->
-        <div class="card-modern overflow-hidden">
-            <div class="bg-beh-navy/5 px-8 py-6 border-b border-beh-navy/10 flex justify-between items-center">
                 <div>
-                    <h3 class="text-md font-black text-beh-navy uppercase tracking-tighter">Individual Performance Breakdown</h3>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">เปรียบเทียบสถิติรายชื่อแพทย์เจาะจงรายบุคคล</p>
+                    <span class="bg-beh-gold text-beh-dark text-[11px] font-black px-4 py-1.5 rounded-full uppercase tracking-tighter mb-5 inline-block shadow-lg">Efficiency Master of the period</span>
+                    <h2 class="text-5xl font-black tracking-tighter mb-3 italic">อาจารย์ <span id="gainer-name" class="text-beh-lightgold">...</span></h2>
+                    <p class="text-white text-2xl font-medium leading-tight">มียอดคนคลิกเข้าชมเพิ่มสูงขึ้น <span id="gainer-val" class="font-black text-beh-gold text-5xl underline underline-offset-8">...</span> คลิก เมื่อเทียบกับรอบที่แล้ว</p>
+                    <div class="mt-10 flex flex-wrap gap-8">
+                        <div class="bg-white/10 px-6 py-3 rounded-2xl border border-white/10 shadow-inner">
+                            <p class="text-[10px] uppercase font-black opacity-60 tracking-widest mb-1">Current SEO Rank</p>
+                            <p id="gainer-pos" class="font-black text-3xl text-beh-gold tracking-tighter">...</p>
+                        </div>
+                        <div class="bg-white/10 px-6 py-3 rounded-2xl border border-white/10 shadow-inner">
+                            <p class="text-[10px] uppercase font-black opacity-60 tracking-widest mb-1">Growth Index</p>
+                            <p class="font-black text-3xl text-beh-success tracking-tighter uppercase">Maximum</p>
+                        </div>
+                    </div>
                 </div>
-                <div id="lastUpdated" class="text-[10px] font-black text-beh-navy bg-white px-3 py-1 rounded-full shadow-sm border border-beh-navy/10">...</div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+        </div>
+
+        <!-- Charts & Distribution -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <div class="card-modern p-8 lg:col-span-2">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-xl font-black text-beh-navy uppercase tracking-tighter italic"><i class="fas fa-chart-area mr-3 text-beh-gold"></i> Performance Overview</h3>
+                    <div id="growth-summary-label" class="text-[11px] font-black px-4 py-1.5 rounded-full border-2 italic tracking-tighter">...</div>
+                </div>
+                <div class="h-[400px]">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+            <div class="card-modern p-8 text-center flex flex-col justify-between">
+                <h3 class="text-xl font-black text-beh-navy uppercase tracking-widest">Device Distribution</h3>
+                <div class="h-64 relative flex justify-center items-center my-6">
+                    <canvas id="deviceChart"></canvas>
+                    <div class="absolute text-center">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">User Base</p>
+                        <i class="fas fa-mobile-screen-button text-3xl text-beh-navy opacity-30 mt-2"></i>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] leading-relaxed">
+                        การวิเคราะห์อุปกรณ์ช่วยให้เรา<br>ปรับแต่ง Content ให้เหมาะกับผู้ใช้
+                    </p>
+                    <div class="bg-slate-50 p-4 rounded-2xl text-[10px] font-black text-beh-navy uppercase italic">
+                        Mobile First Design is Essential
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="card-modern overflow-hidden shadow-2xl border-beh-navy/10">
+            <div class="bg-beh-navy/5 px-8 py-6 border-b border-beh-navy/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h3 class="text-lg font-black text-beh-navy uppercase tracking-tighter italic">Comparison Performance Matrix</h3>
+                    <p class="text-[11px] text-slate-400 font-bold uppercase mt-1 tracking-widest underline decoration-beh-gold underline-offset-4">ข้อมูลเปรียบเทียบเจาะลึกรายชื่อแพทย์ (Individual Statistics)</p>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-beh-navy/10 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-beh-success rounded-full animate-pulse"></span>
+                    <span class="text-[10px] font-black text-beh-navy uppercase italic tracking-wider">Validated Data</span>
+                </div>
+            </div>
+            <div class="overflow-x-auto table-container">
+                <table class="w-full text-left border-collapse min-w-[800px]">
                     <thead>
-                        <tr class="bg-white border-b border-slate-100 text-[10px] text-slate-400 font-black uppercase tracking-widest">
-                            <th class="px-8 py-5">ชื่ออาจารย์แพทย์</th>
-                            <th class="px-8 py-5 text-center">ปัจจุบัน (คลิก)</th>
-                            <th class="px-8 py-5 text-center">ก่อนหน้า (คลิก)</th>
-                            <th class="px-8 py-5 text-right font-black text-beh-navy">การเปลี่ยนแปลง (คลิกจริง)</th>
+                        <tr class="bg-white border-b border-slate-100 text-[11px] text-slate-400 font-black uppercase tracking-widest">
+                            <th class="px-8 py-6">Doctor / Profile URL</th>
+                            <th class="px-8 py-6 text-center bg-slate-50/30">Current Clicks</th>
+                            <th class="px-8 py-6 text-center">Previous Clicks</th>
+                            <th class="px-8 py-6 text-right font-black text-beh-navy">Change (Clicks)</th>
                         </tr>
                     </thead>
                     <tbody id="doctorTableBody" class="divide-y divide-slate-100 bg-white">
-                        <tr><td colspan="4" class="px-8 py-20 text-center text-slate-300 italic font-medium tracking-wide animate-pulse">ระบบกำลังประมวลผลข้อมูลเปรียบเทียบเชิงลึก...</td></tr>
+                        <tr><td colspan="4" class="px-8 py-20 text-center uppercase tracking-widest italic font-bold text-slate-300 animate-pulse">กำลังสกัดข้อมูล Insight เปรียบเทียบรายบุคคล...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="mt-16 pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-6 no-print text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
-            <div>© 2026 Bangkok Eye Hospital - SEO Internal Analysis Report</div>
-            <div class="flex items-center gap-3">
-                <span class="flex items-center gap-1 text-beh-navy"><i class="fas fa-shield-halved"></i> Analyst: ณัฐธยาน์</span>
+        <footer class="mt-20 pt-10 border-t-2 border-slate-200 flex flex-col md:flex-row justify-between items-center gap-8 no-print text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <span>© 2026 Bangkok Eye Hospital - SEO Lab</span>
+                <span class="hidden md:block text-slate-200">|</span>
+                <span class="flex items-center gap-1"><i class="fas fa-shield-halved text-beh-navy opacity-50"></i> Protected Internal Analytics</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-beh-navy bg-beh-navy/5 px-4 py-2 rounded-xl">Analyst: ณัฐธยาน์</span>
+                <span class="text-beh-gold">Strategic Vision 2026</span>
             </div>
         </footer>
     </main>
 
     <script>
-        let mainChart;
+        let mainChart, deviceChart;
 
+        // Function to clean and format Name from URL
+        function formatDrName(str) {
+            if (!str) return 'Unknown';
+            if (str === 'หน้าหลักหมวดหมู่แพทย์') return str;
+            let name = str.replace(/-/g, ' ').trim();
+            return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        // Initialize Charts with Modern Branding
         function initCharts() {
             const ctx = document.getElementById('mainChart').getContext('2d');
             mainChart = new Chart(ctx, {
@@ -215,24 +281,27 @@
                     labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Latest'],
                     datasets: [
                         { 
-                            label: 'Actual Clicks', 
+                            label: 'Clicks', 
                             data: [0,0,0,0,0,0,0], 
                             borderColor: '#004b8d', 
                             backgroundColor: 'rgba(0, 75, 141, 0.1)', 
                             fill: true, 
                             tension: 0.4, 
-                            borderWidth: 4,
+                            borderWidth: 6, 
+                            pointRadius: 6, 
                             pointBackgroundColor: '#fff',
-                            pointRadius: 5
+                            pointBorderColor: '#004b8d',
+                            pointBorderWidth: 2
                         },
                         { 
-                            label: 'Search Position', 
+                            label: 'Ranking', 
                             data: [0,0,0,0,0,0,0], 
                             borderColor: '#c5a059', 
                             yAxisID: 'y1', 
                             tension: 0.4, 
-                            borderDash: [5, 5],
-                            borderWidth: 2
+                            borderDash: [8, 8], 
+                            borderWidth: 3,
+                            pointRadius: 0
                         }
                     ]
                 },
@@ -240,26 +309,50 @@
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, title: { display: true, text: 'Clicks', font: { weight: 'bold' } } },
-                        y1: { reverse: true, min: 1, max: 20, position: 'right', grid: { display: false }, title: { display: true, text: 'Ranking', font: { weight: 'bold' } } }
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(226, 232, 240, 0.5)' },
+                            ticks: { font: { weight: 'bold' } }
+                        },
+                        y1: { 
+                            reverse: true, min: 1, max: 20, 
+                            position: 'right', 
+                            grid: { display: false },
+                            ticks: { font: { weight: 'bold' } }
+                        }
                     }
+                }
+            });
+
+            const devCtx = document.getElementById('deviceChart').getContext('2d');
+            deviceChart = new Chart(devCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Mobile', 'Desktop', 'Tablet'],
+                    datasets: [{ data: [1, 1, 1], backgroundColor: ['#004b8d', '#c5a059', '#cbd5e1'], borderWidth: 10, borderColor: '#fff' }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '82%',
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 25, font: { weight: 'bold', size: 11 } } } }
                 }
             });
         }
 
         function showToast(message) {
             const t = document.getElementById("toast");
-            t.innerText = message;
+            const msg = document.getElementById("toast-msg");
+            msg.innerText = message;
             t.classList.remove("hidden");
-            setTimeout(() => { t.classList.add("hidden"); }, 3000);
+            setTimeout(() => { t.classList.add("hidden"); }, 3500);
         }
 
         function updateBadge(id, val) {
             const el = document.getElementById(id);
             const num = parseFloat(val);
+            if (isNaN(num)) return;
             const isPos = num >= 0;
-            const colorClass = isPos ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600';
-            el.className = `insight-badge ${colorClass} font-black italic`;
+            const colorClass = isPos ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700';
+            el.className = `insight-badge ${colorClass} font-black italic shadow-sm border border-current border-opacity-10`;
             el.innerText = `${isPos ? '↑' : '↓'} ${Math.abs(num)}%`;
         }
 
@@ -269,7 +362,7 @@
 
             try {
                 const response = await fetch('data.json?t=' + Date.now());
-                if (!response.ok) throw new Error('data.json file not found');
+                if (!response.ok) throw new Error('Data Source (data.json) not found');
                 const data = await response.json();
 
                 // 1. Update Core Comparison Cards
@@ -280,14 +373,17 @@
                 document.getElementById('cur-position').innerText = data.kpi.current.position;
                 document.getElementById('prev-position').innerText = data.kpi.previous.position;
 
-                // 2. Growth Badges & Summary
+                // 2. Growth Badges & Summary Text
                 updateBadge('badge-clicks', data.kpi.changes.clicks);
                 updateBadge('badge-impressions', data.kpi.changes.impressions);
                 updateBadge('badge-position', data.kpi.changes.position);
-                document.getElementById('insight-summary').innerText = data.insights.summary_text;
+                
+                if (data.insights && data.insights.summary_text) {
+                    document.getElementById('insight-summary').innerText = data.insights.summary_text;
+                }
 
                 // 3. SEO Success Story (Gainer Card)
-                if (data.insights.top_gainer) {
+                if (data.insights && data.insights.top_gainer) {
                     const card = document.getElementById('gainer-card');
                     card.classList.remove('hidden');
                     document.getElementById('gainer-name').innerText = data.insights.top_gainer.name;
@@ -295,61 +391,67 @@
                     document.getElementById('gainer-pos').innerText = `#${data.insights.top_gainer.current_pos}`;
                 }
 
-                // 4. Individual Comparison Table
+                // 4. Update Detailed Table Breakdown
                 const body = document.getElementById('doctorTableBody');
                 body.innerHTML = '';
                 
-                // Sort by current performance to show top actors
-                data.doctorPages.forEach(dr => {
-                    const diff = dr.growth;
-                    const color = diff > 0 ? 'text-beh-success' : (diff < 0 ? 'text-beh-danger' : 'text-slate-400');
-                    const icon = diff > 0 ? '↑' : (diff < 0 ? '↓' : '-');
-                    
-                    body.innerHTML += `
-                        <tr class="hover:bg-beh-navy/5 transition-all duration-150">
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-2xl bg-beh-navy/5 flex items-center justify-center text-beh-navy border border-beh-navy/10 shadow-sm">
-                                        <i class="fas fa-user-md text-sm"></i>
+                if (data.doctorPages) {
+                    data.doctorPages.forEach(dr => {
+                        const growth = dr.growth || 0;
+                        const color = growth > 0 ? 'text-beh-success' : (growth < 0 ? 'text-beh-danger' : 'text-slate-400');
+                        const icon = growth > 0 ? '↑' : (growth < 0 ? '↓' : '-');
+                        
+                        body.innerHTML += `
+                            <tr class="hover:bg-beh-navy/5 transition-all duration-150 font-bold group">
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-5">
+                                        <div class="w-12 h-12 rounded-2xl bg-beh-navy/5 flex items-center justify-center text-beh-navy border border-beh-navy/10 shadow-sm group-hover:bg-beh-navy group-hover:text-white transition-all">
+                                            <i class="fas fa-user-doctor text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-black text-slate-800 text-sm tracking-tight uppercase italic underline decoration-beh-gold/30 underline-offset-4">${dr.name}</div>
+                                            <div class="text-[9px] text-slate-400 font-mono tracking-tighter uppercase font-bold mt-1">${dr.url.replace('https://www.bangkokeyehospital.com/', '')}</div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div class="font-black text-slate-800 text-sm tracking-tight italic uppercase">${dr.name}</div>
-                                        <div class="text-[9px] text-slate-400 font-mono tracking-tighter uppercase">${dr.url.replace('https://www.bangkokeyehospital.com/', '')}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-8 py-5 text-center font-black text-beh-navy text-base">${dr.current_clicks.toLocaleString()}</td>
-                            <td class="px-8 py-5 text-center text-slate-400 font-bold">${dr.prev_clicks.toLocaleString()}</td>
-                            <td class="px-8 py-5 text-right font-black ${color} text-base">
-                                <span class="bg-current bg-opacity-5 px-3 py-1 rounded-full">
-                                    ${icon} ${Math.abs(diff).toLocaleString()}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
+                                </td>
+                                <td class="px-8 py-6 text-center font-black text-beh-navy text-lg bg-slate-50/30">${dr.current_clicks.toLocaleString()}</td>
+                                <td class="px-8 py-6 text-center text-slate-400 font-bold italic tracking-wider">${dr.prev_clicks.toLocaleString()}</td>
+                                <td class="px-8 py-6 text-right font-black ${color} text-xl">
+                                    <span class="bg-current bg-opacity-10 px-4 py-2 rounded-2xl shadow-inner border border-current border-opacity-10">
+                                        ${icon} ${Math.abs(growth).toLocaleString()}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
 
-                // 5. Update Status & Chart
-                const growthSummary = document.getElementById('growth-summary');
+                // 5. Update Status Labels & Trend Charts
+                const gLabel = document.getElementById('growth-summary-label');
                 const isGrowing = parseFloat(data.kpi.changes.clicks) >= 0;
-                growthSummary.innerText = isGrowing ? 'TREND: GROWTH' : 'TREND: STAGNANT';
-                growthSummary.className = `text-[10px] font-black px-3 py-1 rounded-full border-2 ${isGrowing ? 'text-beh-success border-beh-success' : 'text-beh-danger border-beh-danger'}`;
+                gLabel.innerText = isGrowing ? 'TREND: GROWTH RECORDED' : 'TREND: MAINTENANCE REQUIRED';
+                gLabel.className = `text-[11px] font-black px-5 py-2 rounded-full border-2 italic ${isGrowing ? 'text-beh-success border-beh-success bg-emerald-50' : 'text-beh-danger border-beh-danger bg-red-50 animate-pulse'}`;
 
                 mainChart.data.datasets[0].data = data.charts.clicksTrend;
                 mainChart.data.datasets[1].data = data.charts.positionTrend;
                 mainChart.update();
                 
+                deviceChart.data.datasets[0].data = data.charts.devices;
+                deviceChart.update();
+
                 document.getElementById('lastUpdated').innerText = `LAST SYNC: ${data.lastUpdated}`;
-                showToast('อัปเดต Insight ล่าสุดสำเร็จ');
+                showToast('เชื่อมต่อระบบวิเคราะห์ Deep Insight สำเร็จ');
 
             } catch (error) {
                 console.error(error);
                 showToast('การดึงข้อมูลผิดพลาด: ' + error.message);
+                document.getElementById('insight-summary').innerText = "ERROR: " + error.message;
             } finally {
                 syncIcon.classList.remove('fa-spin');
             }
         }
 
+        // Initialize Everything on Load
         window.addEventListener('DOMContentLoaded', () => {
             initCharts();
             fetchAPI();
