@@ -6,28 +6,120 @@
     },
     "charts": {
         "clicksTrend": [
-            276,
-            207,
-            345,
-            414,
             552,
+            828,
             690,
+            1104,
+            966,
+            1242,
             1381
         ],
         "positionTrend": [
+            7.5,
             7.2,
-            6.7,
-            6.6,
-            6.7,
-            7.1,
-            6.2,
+            7.0,
+            6.8,
+            6.5,
+            6.0,
             6.6
         ],
         "devices": [
-            966,
-            345,
+            1035,
+            276,
             69
         ]
     },
+    "doctorPages": [
+        {
+            "page": "anun-vongthongsri",
+            "clicks": 219,
+            "impressions": 4176,
+            "position": 4.9
+        },
+        {
+            "page": "ophthalmologists",
+            "clicks": 166,
+            "impressions": 18435,
+            "position": 8.1
+        },
+        {
+            "page": "yanin-suwan",
+            "clicks": 85,
+            "impressions": 1337,
+            "position": 4.6
+        },
+        {
+            "page": "pornchai-mahaisavariya-oculoplastic-surgeon",
+            "clicks": 78,
+            "impressions": 1216,
+            "position": 4.6
+        },
+        {
+            "page": "bunyada-putthirangsiwong?service=oculoplastic",
+            "clicks": 77,
+            "impressions": 520,
+            "position": 4.3
+        },
+        {
+            "page": "warunchat-itsariyapat",
+            "clicks": 70,
+            "impressions": 1265,
+            "position": 5.4
+        },
+        {
+            "page": "nawat-watanachai",
+            "clicks": 69,
+            "impressions": 1143,
+            "position": 3.2
+        },
+        {
+            "page": "wiwan-sansanayudh",
+            "clicks": 63,
+            "impressions": 2124,
+            "position": 6.8
+        },
+        {
+            "page": "vivat-komolsuradej",
+            "clicks": 57,
+            "impressions": 2766,
+            "position": 6.6
+        },
+        {
+            "page": "nantinee-vilainerun",
+            "clicks": 52,
+            "impressions": 276,
+            "position": 4.2
+        },
+        {
+            "page": "tassanee-sirikul",
+            "clicks": 50,
+            "impressions": 1058,
+            "position": 5.2
+        },
+        {
+            "page": "%E0%B8%A8%E0%B8%B1%E0%B8%81%E0%B8%94%E0%B8%B4%E0%B9%8C%E0%B8%8A%E0%B8%B1%E0%B8%A2-%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%81%E0%B8%B4%E0%B8%88%E0%B8%88%E0%B8%B2",
+            "clicks": 41,
+            "impressions": 759,
+            "position": 5.5
+        },
+        {
+            "page": "en/anun-vongthongsri",
+            "clicks": 29,
+            "impressions": 594,
+            "position": 5.5
+        },
+        {
+            "page": "%E0%B8%98%E0%B8%B1%E0%B8%8D%E0%B8%8D%E0%B8%97%E0%B8%B1%E0%B8%95-%E0%B8%9C%E0%B8%94%E0%B8%B8%E0%B8%87%E0%B9%80%E0%B8%81%E0%B8%B5%E0%B8%A2%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B8%81%E0%B8%B8%E0%B8%A5?service=cataract-center",
+            "clicks": 26,
+            "impressions": 480,
+            "position": 6.8
+        },
+        {
+            "page": "en/nawat-watanachai",
+            "clicks": 24,
+            "impressions": 284,
+            "position": 4.9
+        }
+    ],
     "lastUpdated": "2026-04-05 00:00"
 }
