@@ -1,17 +1,17 @@
 {
     "kpi": {
         "current": {
-            "clicks": "1,379",
-            "impressions": "43,826",
+            "clicks": "1,371",
+            "impressions": "43,665",
             "position": "6.6"
         },
         "previous": {
-            "clicks": "1,563",
-            "impressions": "74,895",
+            "clicks": "1,558",
+            "impressions": "74,597",
             "position": "5.8"
         },
         "changes": {
-            "clicks": -11.8,
+            "clicks": -12.0,
             "impressions": -41.5,
             "position": -12.1
         }
@@ -20,9 +20,9 @@
         "top_gainer": {
             "name": "Anun Vongthongsri",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/anun-vongthongsri",
-            "current_clicks": 219,
-            "prev_clicks": 169,
-            "growth": 50,
+            "current_clicks": 218,
+            "prev_clicks": 170,
+            "growth": 48,
             "current_pos": 4.8,
             "prev_pos": 5.3
         },
@@ -30,13 +30,13 @@
     },
     "charts": {
         "clicksTrend": [
-            551,
-            827,
-            689,
-            1103,
-            965,
-            1241,
-            1379
+            548,
+            822,
+            685,
+            1096,
+            959,
+            1233,
+            1371
         ],
         "positionTrend": [
             7.5,
@@ -48,8 +48,8 @@
             6.6
         ],
         "devices": [
-            1034,
-            275,
+            1028,
+            274,
             68
         ]
     },
@@ -57,20 +57,20 @@
         {
             "name": "Anun Vongthongsri",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/anun-vongthongsri",
-            "current_clicks": 219,
-            "prev_clicks": 169,
-            "growth": 50,
+            "current_clicks": 218,
+            "prev_clicks": 170,
+            "growth": 48,
             "current_pos": 4.8,
             "prev_pos": 5.3
         },
         {
             "name": "Ophthalmologists",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists",
-            "current_clicks": 177,
-            "prev_clicks": 271,
-            "growth": -94,
-            "current_pos": 7.9,
-            "prev_pos": 5.9
+            "current_clicks": 180,
+            "prev_clicks": 268,
+            "growth": -88,
+            "current_pos": 7.8,
+            "prev_pos": 6.0
         },
         {
             "name": "Yanin Suwan",
@@ -84,45 +84,45 @@
         {
             "name": "Pornchai Mahaisavariya Oculoplastic Surgeon",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/pornchai-mahaisavariya-oculoplastic-surgeon",
-            "current_clicks": 76,
-            "prev_clicks": 38,
-            "growth": 38,
+            "current_clicks": 75,
+            "prev_clicks": 40,
+            "growth": 35,
             "current_pos": 4.5,
             "prev_pos": 4.0
         },
         {
             "name": "Nawat Watanachai",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/nawat-watanachai",
-            "current_clicks": 74,
+            "current_clicks": 73,
             "prev_clicks": 67,
-            "growth": 7,
+            "growth": 6,
             "current_pos": 3.2,
             "prev_pos": 4.2
         },
         {
-            "name": "Bunyada Putthirangsiwong",
-            "url": "https://www.bangkokeyehospital.com/ophthalmologists/bunyada-putthirangsiwong?service=oculoplastic",
-            "current_clicks": 65,
-            "prev_clicks": 67,
-            "growth": -2,
-            "current_pos": 4.9,
-            "prev_pos": 3.7
-        },
-        {
             "name": "Warunchat Itsariyapat",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/warunchat-itsariyapat",
-            "current_clicks": 65,
-            "prev_clicks": 34,
-            "growth": 31,
+            "current_clicks": 64,
+            "prev_clicks": 35,
+            "growth": 29,
             "current_pos": 5.4,
             "prev_pos": 5.9
         },
         {
+            "name": "Bunyada Putthirangsiwong",
+            "url": "https://www.bangkokeyehospital.com/ophthalmologists/bunyada-putthirangsiwong?service=oculoplastic",
+            "current_clicks": 62,
+            "prev_clicks": 70,
+            "growth": -8,
+            "current_pos": 4.9,
+            "prev_pos": 3.7
+        },
+        {
             "name": "Wiwan Sansanayudh",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/wiwan-sansanayudh",
-            "current_clicks": 62,
-            "prev_clicks": 42,
-            "growth": 20,
+            "current_clicks": 61,
+            "prev_clicks": 43,
+            "growth": 18,
             "current_pos": 6.8,
             "prev_pos": 6.8
         },
@@ -136,29 +136,29 @@
             "prev_pos": 7.2
         },
         {
-            "name": "Tassanee Sirikul",
-            "url": "https://www.bangkokeyehospital.com/ophthalmologists/tassanee-sirikul",
-            "current_clicks": 52,
-            "prev_clicks": 68,
-            "growth": -16,
-            "current_pos": 5.0,
-            "prev_pos": 6.3
-        },
-        {
             "name": "Nantinee Vilainerun",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/nantinee-vilainerun",
             "current_clicks": 51,
-            "prev_clicks": 48,
-            "growth": 3,
-            "current_pos": 4.2,
-            "prev_pos": 5.0
+            "prev_clicks": 47,
+            "growth": 4,
+            "current_pos": 4.3,
+            "prev_pos": 4.9
+        },
+        {
+            "name": "Tassanee Sirikul",
+            "url": "https://www.bangkokeyehospital.com/ophthalmologists/tassanee-sirikul",
+            "current_clicks": 51,
+            "prev_clicks": 69,
+            "growth": -18,
+            "current_pos": 4.9,
+            "prev_pos": 6.3
         },
         {
             "name": "ศักดิ์ชัย ใช้กิจจา",
             "url": "https://www.bangkokeyehospital.com/ophthalmologists/%E0%B8%A8%E0%B8%B1%E0%B8%81%E0%B8%94%E0%B8%B4%E0%B9%8C%E0%B8%8A%E0%B8%B1%E0%B8%A2-%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%81%E0%B8%B4%E0%B8%88%E0%B8%88%E0%B8%B2",
             "current_clicks": 41,
-            "prev_clicks": 39,
-            "growth": 2,
+            "prev_clicks": 38,
+            "growth": 3,
             "current_pos": 5.5,
             "prev_pos": 6.9
         },
@@ -169,26 +169,26 @@
             "prev_clicks": 27,
             "growth": 4,
             "current_pos": 5.4,
-            "prev_pos": 4.8
+            "prev_pos": 4.9
+        },
+        {
+            "name": "Rosanun Sikarinkul",
+            "url": "https://www.bangkokeyehospital.com/ophthalmologists/rosanun-sikarinkul",
+            "current_clicks": 28,
+            "prev_clicks": 11,
+            "growth": 17,
+            "current_pos": 5.2,
+            "prev_pos": 4.6
         },
         {
             "name": "Nawat Watanachai",
             "url": "https://www.bangkokeyehospital.com/en/ophthalmologists/nawat-watanachai",
             "current_clicks": 26,
-            "prev_clicks": 22,
-            "growth": 4,
+            "prev_clicks": 20,
+            "growth": 6,
             "current_pos": 4.8,
             "prev_pos": 4.4
-        },
-        {
-            "name": "Rosanun Sikarinkul",
-            "url": "https://www.bangkokeyehospital.com/ophthalmologists/rosanun-sikarinkul",
-            "current_clicks": 25,
-            "prev_clicks": 11,
-            "growth": 14,
-            "current_pos": 5.2,
-            "prev_pos": 4.5
         }
     ],
-    "lastUpdated": "13/04/2026 00:00"
+    "lastUpdated": "14/04/2026 00:00"
 }
